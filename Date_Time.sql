@@ -88,6 +88,7 @@ SELECT
 	FORMAT(CreationTime, 'MM-dd-yyyy') MMddyyyy
 FROM
 	Sales.Orders;
+
 /*
 	Show creationTime using the following format:
 	DAY Wed Jan Q1 2025 12:34:56 PM	
@@ -104,6 +105,65 @@ SELECT
 FROM
 	Sales.Orders;
 
+-- CONVERT
+SELECT
+	CONVERT(INT, '123') AS [String to Int],
+	CreationTime,
+	CONVERT(DATE, CreationTime) AS Date
+FROM
+	Sales.Orders;
 
+-- CAST
+SELECT
+	CAST('123' AS INT) AS [String to Int],
+	CAST('2025-08-20' AS DATE) AS [String to Date],
+	CreationTime,
+	CAST(CreationTime AS DATE)
+from
+	Sales.Orders;
 
+--DATEADD
+SELECT
+	OrderID,
+	OrderDate,
+	DATEADD(YEAR, 2, OrderDate),
+	DATEADD(MONTH, 5, OrderDate),
+	DATEADD(DAY, -10, OrderDate)
+FROM
+	Sales.Orders;
 
+--DATEDIFF
+-- Calculate the age of employees.
+SELECT
+	EmployeeID,
+	BirthDate,
+	DATEDIFF(YEAR, BirthDate, GETDATE()) AS Age
+FROM
+	Sales.Employees;
+
+-- Find the average shipping duration in days for each month.
+SELECT
+	DATENAME(MONTH, OrderDate) AS Month,
+	AVG(DATEDIFF(DAY, OrderDate, ShipDate)) AS AVG
+FROM
+	Sales.Orders
+GROUP BY
+	DATENAME(MONTH, OrderDate);
+
+-- Time gap analysis.
+-- Find the number of days between each order and previous order.
+SELECT
+	OrderID,
+	OrderDate AS CurrentOrder,
+	LAG(OrderDate) OVER (ORDER BY OrderDate) AS PreviousOrder,
+	DATEDIFF(day, LAG(OrderDate) OVER (ORDER BY OrderDate), OrderDate)
+FROM
+	Sales.Orders;
+
+-- ISDATE
+SELECT
+	ISDATE('123') DATECHECK1,
+	ISDATE('2025-08-20') DATECHECK2, -- Only International Standard (SQL Server)
+	ISDATE('20-08-2025') DATECHECK3,
+	ISDATE('2025') DATECHECK4,
+	ISDATE('08') DATECHECK5
